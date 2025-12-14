@@ -1,25 +1,25 @@
 @import "root.css";
 
 .main {
-  height: 100vh;
-  width: 100vw;
-  display: flex;
+  height: 100%;
+  width: 100%;
+  display:flex;
   justify-content: center;
- /* align-items: center;*/
+  align-items: center;
   background-image: url(../src/img/base.png);
 }
 
 .form {
   /*display: flex;*/
   /*flex-direction: column;*/
-  align-items: center;
+  align-items:center;
   gap: 1rem;
   padding: 1rem;
   border-radius: 1rem;
   background-color: var(--white);
   box-shadow: 0 0.25rem 0.5rem #1e1e1e3f;
   /*width: 27rem;*/
-  width: 80vw !important;
+  width: 90vw !important;
   max-width: 1200px;
 }
 
@@ -31,6 +31,7 @@
   font-family: "Gasoek One", sans-serif;
   font-size: 2rem;
   color: var(--green-100);
+  
 }
 
 .input {
@@ -100,6 +101,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: 0.2s linear;
+  
 }
 
 .button:hover {
@@ -169,4 +171,26 @@
 .terms-button:hover {
   color: var(--green-100);
   transition: 0.2s linear;
+}
+
+
+.cabecalho{
+background-color: var(--green-100);
+color: var(--white-100);
+
+}
+.tabela{
+ 
+  border-collapse: separate; /* Permite que o border-radius funcione corretamente */
+  border-spacing: 0;       /* Remove o espaço entre as células */
+  border-radius: 15px;     /* Aplica cantos arredondados a todos os cantos */
+  overflow: hidden;    
+  align-items:center;
+  border-radius: 1rem;
+  background-color: var(--white);
+  box-shadow: 0 0.25rem 0.5rem #1e1e1e3f;
+  width: 90vw !important;
+  max-width: 1200px;
+  margin-bottom: 60px;
+
 }

@@ -1,7 +1,7 @@
 <?php
 include_once('conecta.php');
 
-
+// Recupera os valores enviados pelo formulário
 $relatorio_escolhido = $_POST['relatorios_id'];
 $organizacao_id = $_POST['organizacao_id'] ?? null;
 $evento_id = $_POST['evento_id'] ?? null;
@@ -11,7 +11,7 @@ $data_final = $_POST['data_final'] ?? null;
 
 $condicoes_where = [];
 
-
+// Adiciona condições ao array de filtros conforme os valores recebidos
 if (!empty($organizacao_id)) {  
     $condicoes_where[] = "e.organizacao_id = " . intval($organizacao_id);
 }
@@ -28,6 +28,8 @@ if (!empty($data_final)) {
 }
 
 $filtro_sql = '';
+
+// Constrói a cláusula WHERE com base nas condições acumuladas
 if (!empty($condicoes_where)) {
     $filtro_sql = " and " . implode(" and ", $condicoes_where);
 }
@@ -37,6 +39,7 @@ $filtro_sql2 = !empty($condicoes_where) ? " where " . implode(" and ", $condicoe
 $campos_tabela = [];
 $sql = '';
 
+// Define a consulta SQL com base no relatório escolhido
 switch ($relatorio_escolhido) {
     case 'financeiro':
         $sql = "select e.nome as Evento,
@@ -46,7 +49,24 @@ switch ($relatorio_escolhido) {
             where p.status = 'aprovado'
             " . $filtro_sql . "
             group by e.nome;";
+        // Define os campos da tabela para cada relatório
         $campos_tabela = ['Evento', 'Receita Líquida'];
+        break;
+
+    case 'vendas_detalhe' :
+        $sql = "select c.nome as nome_cliente, p.data_criacao as data_venda,
+            l.preco as preco_lote, s.nome as nome_setor, pg.status as status_pagamento,
+            e.nome as nome_evento
+            from pedido p
+            inner join cliente c on p.cliente_id = c.id
+            inner join setor s on p.setor_id = s.id
+            inner join lote l on p.lote_id = l.id
+            inner join pagamento pg on p.id = pg.pedido_id
+            inner join evento e on s.evento_id = e.id
+            " . $filtro_sql2 . "
+            group by p.id, c.nome, p.data_criacao, l.preco, s.nome, pg.status
+            order by p.data_criacao desc ;";
+        $campos_tabela = ['Nome Cliente', 'Data do pedido', 'Preço','Lote', 'Status', 'Evento'];
         break;
 
     case 'ocupacao':
@@ -90,12 +110,13 @@ switch ($relatorio_escolhido) {
          $campos_tabela = ['Nome comissário ', 'Total comissão'];
         break;
     
+    // caso nenhum relatório seja escolhido ou o valor será inválido
     default:
        break;
     }
 
 $resultados_relatorio = []; 
-
+// Executa a consulta SQL se houver uma definida
     if (!empty($sql)) {
         
         $resultado = mysqli_query($bancodedados, $sql);
@@ -106,6 +127,6 @@ $resultados_relatorio = [];
             mysqli_free_result($resultado);
         }
     }
-
+// Inclui o arquivo de relatórios para exibir os resultados
 include('relatorios.php');
 ?>

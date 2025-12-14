@@ -18,7 +18,7 @@
     <?php
       include_once('conecta.php');
       
-
+    // Recupera os valores enviados pelo formulário, se existirem
     $organizacao_id = isset($_POST['organizacao_id']) ? $_POST['organizacao_id'] : null;
     $evento_id = isset($_POST['evento_id']) ? $_POST['evento_id'] : null;
     $relatorios_id = isset($_POST['relatorios_id']) ? $_POST['relatorios_id'] : null;
@@ -28,10 +28,10 @@
     ?>
     <main role="main">
       <div class="main">
-        <div class="container-fluid px-5">
+        <div class="container">
           <br>
-          <h1 class="title">Relatórios</h1>
-
+          <h1 class="title">Exporte relatórios</h1>
+          <!-- Formulário para seleção de filtros e tipo de relatório -->
             <form action="pesquisa.php" method="POST" class="form">
               <div class="form-group w-100 mb-3">
                 <label for="relatorios_id">Qual relatório você quer exportar hoje?</label>
@@ -40,6 +40,7 @@
                 <option value="ocupacao">Ingressos vendidos</option>  
                 <option value="checkin">Qtd de check-in</option>      
                 <option value="comissao">Vendas por comissão</option>
+                <option value="vendas_detalhe">Detalhes de venda</option>
                 </select>
               </div>
 
@@ -55,6 +56,7 @@
                 <input  value="data_final" type="date" class="form-control" id="data_final" name="data_final" placeholder="Informe a data final." >  
               </div>
 
+               <!-- Filtros de organização e evento -->
               <div class="col-12 col-md-6 col-lg-3">
                 <label for="organizacao_id">Qual organização?</label>
                 <select class="form-control" name="organizacao_id" id="organizacao_id">
@@ -101,13 +103,13 @@
           </form>
           <h2 class="title mt-5">Relatório</h2>
           <?php 
-      
+          // Exibe os resultados do relatório, se houver
           if (isset($resultados_relatorio) && !empty($resultados_relatorio)) { 
           ?>
-            <div class="table-responsive mt-4">
+            <div class="tabela">
               <table class="table table-striped table-bordered">
-                
-                <thead class="bg-dark text-white">
+                <!-- Cabeçalho da tabela -->
+                <thead class="cabecalho">
                   <tr>
                     <?php 
                     foreach ($campos_tabela as $campo) {
@@ -119,6 +121,7 @@
 
                 <tbody>
                   <?php 
+                  // Exibe as linhas do relatório
                   foreach ($resultados_relatorio as $linha) {
                     echo "<tr>";
                     foreach ($linha as $valor) {
@@ -128,6 +131,7 @@
                   }
                     ?>
                     <?php 
+                    // Caso não haja resultados, exibe uma mensagem
                       } else {
                         
                         echo "<p class='text-muted'>Selecione um filtro e clique em Pesquisar para gerar o relatório, ou a pesquisa não retornou resultados.</p>";
