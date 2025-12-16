@@ -16,8 +16,7 @@ if (!$token_ingresso || !$usuario_id) {
     exit;
 }
 
-$conexao = new Conexao();
-$db = $conexao->getConexao();
+$db = Database::getConnection();
 
 try {
     $db->beginTransaction();

@@ -9,8 +9,7 @@ use MercadoPago\Payment;
 use MercadoPago\SDK;
 
 
-$conexao = new Conexao();
-$db = $conexao->getConexao();
+$db = Database::getConnection();
 
 
 $data = json_decode(file_get_contents('php://input'), true);
