@@ -1,70 +1,129 @@
 <?php
 
-session_start(); 
-require 'Conexao.php';
+session_start();
+header('Content-Type: application/json');
 
-if (!isset($_SESSION['usuario_id'])) {
-    die("Acesso negado! Por favor, faça login (rode o login_simulado.php).");
+
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$accessToken = ''; //aqui nós vamos colocar o código
+MercadoPago\SDK::setAccessToken($accessToken);
+
+if (!isset($_SESSION['cliente_id'])){
+    http_response_code(401); 
+    echo json_encode(['status' => 'erro', 'mensagem' => 'Acesso negado. Necessário fazer login.']);
+    exit;
+}
+$cliente_id = $_SESSION['cliente_id']; 
+
+
+$dados_compra = [
+    'lote_id' => $_POST['lote_id'] ?? null,
+    'quantidade' => (int)($_POST['quantidade'] ?? 0),
+    'evento_nome' => 'Semana de Tecnologia IF',
+    'cupom_codigo' => trim($_POST['cupom_codigo'] ?? '')
+];
+
+
+if ($dados_compra['lote_id'] <= 0 || $dados_compra['quantidade'] <= 0) {
+    http_response_code(400);
+    echo json_encode(['status' => 'erro', 'mensagem' => 'Dados de compra incompletos.']);
+    exit;
 }
 
-$userId = $_SESSION['usuario_id'];
-$accessToken = 'APP_USR-6777044867566758-121512-1d636628dfb4647e618230ba2b040111-3067578484'; 
+
+$desconto = 0.00;
+$cupom_id = null;
+$taxa_percentual = 0.10;
+
 
 try {
-
     $conexao = new Conexao();
-    $pdo = $conexao->getConexao();
-    $sql = "SELECT * FROM pedido WHERE cliente_id = :uid AND status = 'pendente' ORDER BY id DESC LIMIT 1";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([':uid' => $userId]);
-    $pedido = $stmt->fetch(PDO::FETCH_ASSOC);
+    $db = $conexao->getConexao();
+    $db->beginTransaction();
 
-    if (!$pedido) {
-        die("<h3>Nenhum pedido pendente encontrado para " . $_SESSION['usuario_nome'] . ".</h3>");
+
+    $stmt_lote = $db->prepare("
+        SELECT l.preco, l.setor_id FROM lote l WHERE l.id = ? AND l.status = 'ativo'
+    ");
+    $stmt_lote->execute([$dados_compra['lote_id']]);
+    $lote = $stmt_lote->fetch(PDO::FETCH_ASSOC);
+
+
+    if (!$lote) {
+        throw new Exception("Lote de ingresso inválido ou inativo.");
     }
 
-    
-    $dadosPagamento = [
-        "items" => [
-            [
-                "title" => "Ingresso #{$pedido['id']} - Evento IF",
-                "quantity" => 1,
-                "currency_id" => "BRL",
-                "unit_price" => (float)$pedido['total_liquido']
-            ]
-        ],
-        "back_urls" => [
-            "success" => "http://localhost/Projeto_Back_End/projeto_back_end_2025_copia/retorno_pagamento.php?pedido_id=" . $pedido['id'],
-            "failure" => "http://localhost/Projeto_Back_End/projeto_back_end_2025_copia/retorno_pagamento.php?status=falha"
-        ],
-        "auto_return" => "approved",
-        "external_reference" => (string)$pedido['id']
-    ];
+    $preco_unitario = $lote['preco'];
+    $setor_id = $lote['setor_id'];
+    $valor_bruto = $dados_compra['quantidade'] * $preco_unitario;
 
-    $curl = curl_init();
-    curl_setopt_array($curl, [
-        CURLOPT_URL => "https://api.mercadopago.com/checkout/preferences",
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_CUSTOMREQUEST => "POST",
-        CURLOPT_POSTFIELDS => json_encode($dadosPagamento),
-        CURLOPT_HTTPHEADER => [
-            "Authorization: Bearer $accessToken",
-            "Content-Type: application/json"
-        ],
+
+    if (!empty($dados_compra['cupom_codigo'])) {
+        $stmt_cupom = $db->prepare("
+            SELECT id, valor FROM cupom
+            WHERE codigo = ? AND tipo = 'valor' AND periodo_fim > NOW()
+        ");
+        $stmt_cupom->execute([$dados_compra['cupom_codigo']]);
+        $cupom = $stmt_cupom->fetch(PDO::FETCH_ASSOC);
+        if ($cupom) {
+            $desconto = $cupom['valor'];
+            $cupom_id = $cupom['id'];
+        }
+    }
+
+    $taxa = $valor_bruto * $taxa_percentual;
+    $total_liquido = $valor_bruto + $taxa - $desconto;
+    if ($total_liquido <= 0) $total_liquido = 0.01;
+
+
+    $stmt_pedido = $db->prepare("
+        INSERT INTO pedido
+        (cliente_id, canal_venda, setor_id, lote_id, quantidade, valor_bruto, taxa, desconto, total_liquido, cupom_id, status)
+        VALUES (?, 'ecommerce', ?, ?, ?, ?, ?, ?, ?, ?, 'pendente')
+    ");
+    $stmt_pedido->execute([
+        $cliente_id, $setor_id, $dados_compra['lote_id'], $dados_compra['quantidade'],
+        $valor_bruto, $taxa, $desconto, $total_liquido, $cupom_id
     ]);
+    $pedido_id = $db->lastInsertId();
 
-    $response = curl_exec($curl);
-    curl_close($curl);
-    
-    $mp = json_decode($response, true);
-    $link = $mp['init_point'] ?? '#';
 
-   
-    echo "<h2>Olá, {$_SESSION['usuario_nome']}!</h2>";
-    echo "<p>Você tem um pedido pendente no valor de <b>R$ " . number_format($pedido['total_liquido'], 2, ',', '.') . "</b>.</p>";
-    echo "<a href='$link' style='background:#009EE3; color:white; padding:15px; text-decoration:none; border-radius:5px;'>Pagar Agora com Mercado Pago</a>";
+    $stmt_pagamento = $db->prepare("
+        INSERT INTO pagamento (pedido_id, metodo, status, valor, taxa)
+        VALUES (?, 'cartao', 'pendente', ?, ?)
+    ");
+    $stmt_pagamento->execute([$pedido_id, $total_liquido, $taxa]);
+
+    $db->commit();
+
+    $preference = new MercadoPago\Preference();
+    $item = new MercadoPago\Item();
+    $item->title = $dados_compra['evento_nome'] . " (Pedido #{$pedido_id})";
+    $item->quantity = 1;
+    $item->unit_price = $total_liquido;
+    $preference->items = [$item];
+
+
+    $preference->back_urls = [
+        "success" => "http://localhost/projeto_backend_2025/pages/sucesso.php?pedido_id={$pedido_id}",
+        "failure" => "http://localhost/projeto_backend_2025/pages/falha.php"
+    ];
+    $preference->auto_return = "approved";
+    $preference->notification_url = "URL_PÚBLICA/api/webhook_mercadopago.php";
+    $preference->external_reference = (string)$pedido_id;
+
+    $preference->save();
+
+
+    echo json_encode(['status' => 'ok', 'link_pagamento' => $preference->init_point]);
+
 
 } catch (Exception $e) {
-    echo "Erro no sistema: " . $e->getMessage();
+    if (isset($db) && $db->inTransaction()) $db->rollBack();
+    error_log("Erro ao Criar Pedido: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['status' => 'erro', 'mensagem' => 'Falha ao processar o pedido: ' . $e->getMessage()]);
 }
 ?>
