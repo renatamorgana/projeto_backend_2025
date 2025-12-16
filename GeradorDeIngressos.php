@@ -1,7 +1,5 @@
 <?php
-// /GeradorDeIngressos.php
-// Usará a biblioteca de QR Code instalada via Composer (chillerlan/php-qrcode)
-use chillerlan\QRCode\{QRCode};
+
 
 class GeradorDeIngressos {
 
@@ -45,3 +43,5 @@ class GeradorDeIngressos {
         return true;
     }
 }
+
+?>

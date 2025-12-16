@@ -1,8 +1,11 @@
 <?php
 
-    require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
-    use MercadoPago\SDK;
+use MercadoPago\MercadoPagoConfig;
 
-    SDK::setAccessToken('APP_USR-6777044867566758-121512-1d636628dfb4647e618230ba2b040111-3067578484');
+MercadoPagoConfig::setAccessToken('APP_USR-3871915922687609-121614-8d2abda2b85d71e57eb8ed2d56aa5aec-3067578484');
+
+
 ?>
+s
