@@ -30,6 +30,9 @@
             mysqli_query($bancodedados,$sql);
         }
         if($_GET['opcao']=='a')
+=======
+        if(isset($_GET['opcao']) && $_GET['opcao']=='a')
+>>>>>>> Stashed changes
         {
           $id = $_GET['id'];
           $sql = "select * from pedido where id = $id";
@@ -50,6 +53,9 @@
           }
         }
       }
+=======
+      
+>>>>>>> Stashed changes
     ?>
   <main class="main">
    <h1 class='title'>Cadastrar Pedido</h1>
@@ -68,6 +74,24 @@
                    echo "<option selected value='".$linha['id']."'>".$linha['nome']."</option>";  
                   else
                    echo "<option value='".$linha['id']."'>".$linha['nome']."</option>";
+=======
+        <form class="form" action="novo_pedido.php" method="POST">
+         <div>
+          <label for="cliente">Cliente</label>
+            <select class="input" name="cliente" id="cliente" required>
+              <option value="">-- Selecione um Cliente --</option>
+              <?php
+               $sql = "select id, nome from cliente order by nome";
+                $resultado = mysqli_query($bancodedados,$sql);
+                if($resultado) {
+                  while($linha = mysqli_fetch_array($resultado))
+                  {
+                   if(isset($cliente_id) && $cliente_id == $linha['id'])
+                     echo "<option selected value='".$linha['id']."'>".$linha['nome']."</option>";  
+                    else
+                     echo "<option value='".$linha['id']."'>".$linha['nome']."</option>";
+                  }
+>>>>>>> Stashed changes
                 }
               ?>              
             </select>
@@ -79,6 +103,15 @@
                   foreach($opcoes as $op) {
                     $sel = (isset($canal_venda) && $canal_venda == $op) ? ' selected' : '';
                     echo "<option$sel>$op</option>";
+=======
+              <select class="input" name="canal_venda" id="canal_venda" required>
+                <option value="">-- Selecione --</option>
+                <?php
+                  $opcoes = array('ecommerce' => 'Ecommerce','comissario' => 'Comissário','bilheteria' => 'Bilheteria');
+                  foreach($opcoes as $val => $op) {
+                    $sel = (isset($canal_venda) && $canal_venda == $val) ? ' selected' : '';
+                    echo "<option value='$val'$sel>$op</option>";
+>>>>>>> Stashed changes
                   }
                 ?>
             </select>
@@ -94,6 +127,23 @@
                     echo "<option selected value='".$linha['id']."'>".$linha['setor']."</option>";  
                     else
                     echo "<option value='".$linha['id']."'>".$linha['setor']."</option>";
+=======
+              <select class="input" name="setor_id" id="setor" required>
+                <option value="">-- Selecione um Setor --</option>
+                <?php
+                  $sql = "select id, nome from setor order by nome";
+                  $resultado = mysqli_query($bancodedados,$sql);
+                  if($resultado && mysqli_num_rows($resultado) > 0) {
+                    while($linha = mysqli_fetch_array($resultado))
+                    {
+                      if(isset($setor_id) && $setor_id == $linha['id'])
+                        echo "<option selected value='".$linha['id']."'>".$linha['nome']."</option>";  
+                      else
+                        echo "<option value='".$linha['id']."'>".$linha['nome']."</option>";
+                    }
+                  } else {
+                    echo "<option>Nenhum setor disponível</option>";
+>>>>>>> Stashed changes
                   }
                 ?>      
               </select>
@@ -109,6 +159,23 @@
                       echo "<option selected value='".$linha['id']."'>".$linha['lote']."</option>";  
                       else
                       echo "<option value='".$linha['id']."'>".$linha['lote']."</option>";
+=======
+                <select class="input" name="lote_id" id="lote" required>
+                  <option value="">-- Selecione um Lote --</option>
+                  <?php
+                    $sql = "select l.id, l.preco, s.nome as setor_nome from lote l inner join setor s on l.setor_id = s.id where l.status = 'ativo' order by s.nome, l.preco";
+                    $resultado = mysqli_query($bancodedados,$sql);
+                    if($resultado && mysqli_num_rows($resultado) > 0) {
+                      while($linha = mysqli_fetch_array($resultado))
+                      {
+                        if(isset($lote_id) && $lote_id == $linha['id'])
+                          echo "<option selected value='".$linha['id']."'>".$linha['setor_nome']." - R$ ".$linha['preco']."</option>";  
+                        else
+                          echo "<option value='".$linha['id']."'>".$linha['setor_nome']." - R$ ".$linha['preco']."</option>";
+                      }
+                    } else {
+                      echo "<option>Nenhum lote disponível</option>";
+>>>>>>> Stashed changes
                     }
                   ?>     
                 </select>
@@ -148,6 +215,8 @@
                 <input class="input" type="date" name="prazo_expiracao" id="prazo_expiracao">
                 </input>
 
+=======
+>>>>>>> Stashed changes
             <?php
               if(isset($_GET['opcao']) && $_GET['opcao']=='a')
               {
@@ -160,6 +229,12 @@
         
             <br>
             <input class="button" type="submit" value="Gravar">
+=======
+            <div>
+            <br>
+            <input class="button" type="submit" value="Gravar">
+            </div>
+>>>>>>> Stashed changes
       </form>
     </div>
     <div>
@@ -191,6 +266,10 @@
             $canal_venda = $_POST['canal_venda'];
             $setor = $_POST['setor'];
             $lote = $_POST['lote'];
+=======
+            $setor_id = $_POST['setor_id'];
+            $lote_id = $_POST['lote_id'];
+>>>>>>> Stashed changes
             $quantidade = $_POST['quantidade'];
             $valor_bruto = $_POST['valor_bruto'];
             $taxa = $_POST['taxa'];
@@ -205,3 +284,40 @@
 
         }
       ?>
+=======
+            $sql = "update pedido set cliente_id='$cliente', canal_venda = '$canal_venda', setor_id = '$setor_id', lote_id = '$lote_id', quantidade = '$quantidade', valor_bruto = '$valor_bruto', taxa = '$taxa', desconto = '$desconto', total_liquido = '$total_liquido', status = '$status', prazo_expiracao = '$prazo_expiracao' where id = $id";
+            if(mysqli_query($bancodedados,$sql))
+            {
+              header('Location: todos_pedidos.php');
+              exit();
+            }
+
+          }
+          else {
+            $cliente = $_POST['cliente'];
+            $canal_venda = $_POST['canal_venda'];
+            $setor_id = $_POST['setor_id'];
+            $lote_id = $_POST['lote_id'];
+            $quantidade = $_POST['quantidade'];
+            $valor_bruto = $_POST['valor_bruto'];
+            $taxa = $_POST['taxa'];
+            $desconto = $_POST['desconto'];
+            $total_liquido = $_POST['total_liquido'];
+            $status = $_POST['pendente'];
+            $prazo_expiracao = $_POST['prazo_expiracao'];
+            $data_criacao = date('Y-m-d H:i:s');
+            $sql = "insert into pedido (cliente_id,canal_venda,setor_id,lote_id,quantidade,valor_bruto,taxa,desconto,total_liquido,status,prazo_expiracao,data_criacao) values ('$cliente','$canal_venda','$setor_id','$lote_id','$quantidade','$valor_bruto','$taxa','$desconto','$total_liquido','$status','$prazo_expiracao','$data_criacao')";
+            if(mysqli_query($bancodedados,$sql))
+            {
+              header('Location: todos_pedidos.php');
+              exit();
+            }  
+          }
+
+        }
+      ?>
+    </div>
+    <script src="../scripts/pedido_calc.js"></script>
+  </body>
+</html>
+>>>>>>> Stashed changes

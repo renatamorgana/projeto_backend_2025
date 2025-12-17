@@ -17,6 +17,46 @@
     <?php
       require_once(__DIR__ . '/../conecta.php');
       ?>
+=======
+      $mensagem_erro = '';
+      if(isset($_GET['opcao']))
+      {
+        if($_GET['opcao']=='e')
+        {
+            $id = $_GET['id'];
+            // Verificar se há pedidos associados a este cliente
+            $sql_verifica = "select count(*) as total from pedido where cliente_id = $id";
+            $resultado_verifica = mysqli_query($bancodedados,$sql_verifica);
+            $linha_verifica = mysqli_fetch_array($resultado_verifica);
+            
+            if($linha_verifica['total'] > 0)
+            {
+              $mensagem_erro = "Não é possível excluir este cliente pois existem pedidos associados. Exclua os pedidos primeiro.";
+            }
+            else
+            {
+              $sql = "delete from cliente where id = $id";
+              mysqli_query($bancodedados,$sql);
+              header('Location: clientes_cadastrados.php');
+              exit();
+            }
+        }
+        if($_GET['opcao']=='a')
+        {
+          $id = $_GET['id'];
+          $sql = "select * from cliente where id = $id";
+          $resultado = mysqli_query($bancodedados,$sql);
+          if ($linha = mysqli_fetch_array($resultado))
+          {
+            $nome = $linha['nome'];
+            $documento = $linha['documento'];
+            $contato = $linha['contato'];
+            $consentimento = $linha['consentimento'];
+          }
+        }
+      }
+    ?>
+>>>>>>> Stashed changes
     <div class="navbar"> 
       <a href="../index.html">Inicio</a> 
       <a href="novo_pedido.php">Novo Pedido</a> 
@@ -53,6 +93,10 @@
               echo "<td><a href='clientes.php?opcao=e&id=".$linha['id']."'>Excluir</a></td>";
               echo "<td><a href='clientes.php?opcao=a&id=".$linha['id']."'>Editar</a></td></tr>";
 
+=======
+              echo "<td><a href='clientes_cadastrados.php?opcao=e&id=".$linha['id']."'>Excluir</a></td>";
+              echo "<td><a href='cadastro_clientes.php?opcao=a&id=".$linha['id']."'>Editar</a></td></tr>";
+>>>>>>> Stashed changes
             }
           ?>
 

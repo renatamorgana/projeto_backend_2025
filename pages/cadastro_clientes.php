@@ -51,6 +51,9 @@
    <h1 class='title'>Cadastro de Cliente</h1>
         <div>
           <form class="form" action="clientes.php" method="POST">
+=======
+          <form class="form" action="cadastro_clientes.php" method="POST">
+>>>>>>> Stashed changes
             <div>
               <label for="nome">Nome</label>
                 <input class="input" required value="<?php if(isset($nome)) echo $nome;?>" type="text" id="nome" name="nome" placeholder="Informe o nome do cliente" size="60">
@@ -95,6 +98,13 @@
               $sql = "update cliente set nome='$nome', documento = '$documento', contato = '$contato', consentimento='$consentimento' where id = $id";
               mysqli_query($bancodedados,$sql);
 
+=======
+              if(mysqli_query($bancodedados,$sql))
+              {
+                header('Location: clientes_cadastrados.php');
+                exit();
+              }
+>>>>>>> Stashed changes
             }
             else {
               $nome = $_POST['nome'];
@@ -103,6 +113,13 @@
               $consentimento = isset($_POST['consentimento_id']) ? $_POST['consentimento_id'] : '0';
               $sql = "insert into cliente (nome,documento,contato,consentimento) values ('$nome','$documento','$contato','$consentimento')";
               mysqli_query($bancodedados,$sql);  
+=======
+              if(mysqli_query($bancodedados,$sql))
+              {
+                header('Location: clientes_cadastrados.php');
+                exit();
+              }
+>>>>>>> Stashed changes
             }
           }
         ?>
