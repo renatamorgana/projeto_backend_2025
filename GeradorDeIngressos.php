@@ -36,7 +36,7 @@ class GeradorDeIngressos {
             $stmt_insert->execute([
                 $pedidoId, 
                 $token, 
-                $qrcode_path, 
+                $qrcode_url, 
                 $titularNome, 
                 $titularDocumento
             ]);
