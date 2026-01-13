@@ -8,4 +8,3 @@ MercadoPagoConfig::setAccessToken('APP_USR-3871915922687609-121614-8d2abda2b85d7
 
 
 ?>
-s
