@@ -29,6 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
+
 <h2 class="title">Cadastro de Local</h2>
 
 <form method="post" class="form">
