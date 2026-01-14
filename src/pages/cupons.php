@@ -50,62 +50,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="utf-8">
   <title>Cupons</title>
-  <link href="css/bootstrap.min.css" rel="stylesheet">
-  <link href="styles/auth_new.css" rel="stylesheet">
+   <link rel="stylesheet" href="../styles/global.css" />
+	<link rel="stylesheet" href="../styles/lista.css"/>
+	<link rel="stylesheet" href="../styles/index.css"/>
+	<link rel="stylesheet" href="../styles/navbar.css"/>
+  <link rel="stylesheet" href="..\styles\texto.css" />
 </head>
 <body>
 <main class="main">
-  <div class="container mt-5">
-    <h1 class="title">Cadastrar Cupom</h1>
-
-    <?php if ($mensagem): ?>
-      <div class="alert alert-info"><?= $mensagem ?></div>
-    <?php endif; ?>
+  <div class="container ">
 
     <form method="POST" class="form">
+    <h1 class="title">Cadastrar Cupom</h1>
 
-      <div class="mb-3">
-        <label>Código</label>
-        <input type="text" name="codigo" class="form-control" required>
+      <div class="input-wrapper">
+        <span class="input-label">Código</span>
+        <input type="text" name="codigo" required>
       </div>
 
-      <div class="mb-3">
-        <label>Tipo</label>
-        <select name="tipo" class="form-control" required>
-          <option value="percentual">Percentual (%)</option>
+      <div class="dropdown-wrapper">
+       <span class="dropdown-label">Tipo</span>
+        <select name="tipo" required>
+          <option value="percentual" disabled selected>Percentual (%)</option>
           <option value="valor">Valor fixo (R$)</option>
         </select>
       </div>
 
-      <div class="mb-3">
-        <label>Valor</label>
+      <div class="input-wrapper">
+          <span class="input-label" >Valor</span>
         <input type="number" step="0.01" name="valor" class="form-control" required>
       </div>
 
       <div class="row">
-        <div class="col mb-3">
-          <label>Período inicial</label>
+        <div class="input-wrapper">
+            <span class="input-label" >Período inicial</span>
           <input type="date" name="periodo_ini" class="form-control" required>
         </div>
-        <div class="col mb-3">
-          <label>Período final</label>
+        <div class="input-wrapper">
+          <span class="input-label">Período final</span>
           <input type="date" name="periodo_fim" class="form-control" required>
         </div>
       </div>
 
       <div class="row">
-        <div class="col mb-3">
-          <label>Limite total</label>
+        <div class="input-wrapper">
+          <span class="input-label">Limite total</span>
           <input type="number" name="limite_total" class="form-control" required>
         </div>
-        <div class="col mb-3">
-          <label>Limite por cliente</label>
+        <div class="input-wrapper">
+          <span class="input-label">Limite por cliente</span>
           <input type="number" name="limite_cliente" class="form-control" required>
         </div>
       </div>
 
-      <div class="mb-3">
-        <label>Canal restrito</label>
+      <div class="dropdown-wrapper">
+       <span class="dropdown-label">Canal restrito</span>
         <select name="canal_restrito" class="form-control" required>
           <option value="ecommerce">E-commerce</option>
           <option value="comissario">Comissário</option>
@@ -113,10 +112,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </select>
       </div>
 
-      <div class="mb-3">
-        <label>Comissário (opcional)</label>
+      <div class="input-wrapper">
+          <span class="input-label">Comissário (opcional)</span>
         <input type="number" name="comissario_id" class="form-control">
       </div>
+      
+    <?php if ($mensagem): ?>
+      <div class="alert alert-info"><?= $mensagem ?></div>
+    <?php endif; ?>
 
       <button class="button">Salvar cupom</button>
 

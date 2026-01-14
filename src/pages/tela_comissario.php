@@ -14,23 +14,12 @@ session_start();
     <link rel="icon" href="src/img/favicon.ico">
 
     <title>Tela comissário</title>
-    <link rel="stylesheet" href="../src/styles/global.css" />
-	<link rel="stylesheet" href="../src/styles/lista.css"/>
-	<link rel="stylesheet" href="../src/styles/index.css"/>
-	<link rel="stylesheet" href="../src/styles/navbar.css"/>
+    <link rel="stylesheet" href="../styles/global.css" />
+	<link rel="stylesheet" href="../styles/lista.css"/>
+	<link rel="stylesheet" href="../styles/index.css"/>
+	<link rel="stylesheet" href="../styles/navbar.css"/>
 	
-	<!--
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
-    />
-	-->
+	
 	
     <script src="../scripts/home.js" defer></script>
 	
@@ -64,7 +53,7 @@ session_start();
       </div>
     </header>-->
     <?php
-    include_once('../conecta.php');
+    include_once('conecta.php');
     ?>
     <body>
       <div class="main">
@@ -126,7 +115,7 @@ session_start();
 				<tbody>
 					
 				  <?php
-					echo "<p>Bem-vindo " .$_SESSION["login"]. ",</p>";//pegar sessao_start em auth.php
+					echo "<p>Bem-vindo Nome,</p>";//pegar sessao_start em auth.php
 					$sql="SELECT comissario.*, organizacao.nome AS organiza, repasse_comissao.valor AS repasse FROM comissario, organizacao, repasse_comissao
 					WHERE comissario.organizacao_id = organizacao.id AND repasse_comissao.comissario_id = comissario.id AND comissario.id = 1";//pegar comissario.id por uma varialve php
 					$resultado=mysqli_query($bancodedados, $sql);

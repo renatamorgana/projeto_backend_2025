@@ -9,11 +9,11 @@
 
     <title>Controle de Comissários</title>
 
-   <link rel="stylesheet" href="src\styles\global.css" />
-     <link rel="stylesheet" href="src\styles\components\input.css" />
-     <link rel="stylesheet" href="src\styles\components\select.css" />
-     <link rel="stylesheet" href="src\styles\lista_new.css" />
-     <link rel="stylesheet" href="styles\texto.css" />
+   <link rel="stylesheet" href="..\styles\global.css" />
+     <link rel="stylesheet" href="..\styles\components\input.css" />
+     <link rel="stylesheet" href="..\styles\components\select.css" />
+     <link rel="stylesheet" href="..\styles\lista_new.css" />
+     <link rel="stylesheet" href="..\styles\texto.css" />
      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=edit" />
   </head>
 

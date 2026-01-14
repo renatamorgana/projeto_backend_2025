@@ -9,11 +9,11 @@
 
     <title>Relatórios</title>
 
-     <link rel="stylesheet" href="src\styles\global.css" />
-     <link rel="stylesheet" href="src\styles\components\input.css" />
-     <link rel="stylesheet" href="src\styles\components\select.css" />
-     <link rel="stylesheet" href="src\styles\lista_new.css" />
-     <link rel="stylesheet" href="styles\texto.css" />
+     <link rel="stylesheet" href="..\styles\global.css" />
+     <link rel="stylesheet" href="..\styles\components\input.css" />
+     <link rel="stylesheet" href="..\styles\components\select.css" />
+     <link rel="stylesheet" href="..\styles\lista_new.css" />
+     <link rel="stylesheet" href="..\styles\texto.css" />
 
      
   </head>
@@ -34,8 +34,6 @@
       <div class="main">
         <div class="container">
           <br>
-          
-
           <!-- Formulário para seleção de filtros e tipo de relatório -->
             <form action="pesquisa.php" method="POST" class="form">
               <h1 class="title">Exporte relatórios</h1>
