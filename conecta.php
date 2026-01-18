@@ -1,5 +1,19 @@
 <?php
 
+
+/*
+Este arquivo está estruturado dessa forma porque parte do projeto (os arquivos envolvendo pagamentos, ingressos e check-in) 
+foi desenvolvida utilizando PDO. Se alterarmos a forma principal de conexão ou as referências dos arquivos, grande parte dos 
+códigos deixaria de funcionar, o que exigiria refatorar vários arquivos do sistema.
+
+Por isso, a classe Conexao foi mantida para atender o uso de PDO, e a partir dela reaproveitamos
+os mesmos dados (host, banco, usuário e senha) para criar também a conexão via MySQLi.
+Assim, garantimos compatibilidade com as partes do sistema que usam PDO e com as que ainda usam MySQLi,
+sem precisar alterar o restante do projeto.
+
+*/
+
+
 class Conexao {
 	public $host = 'localhost';
     public $db   = 'eventos_if';
